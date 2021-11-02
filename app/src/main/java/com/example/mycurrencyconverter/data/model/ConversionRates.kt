@@ -1,5 +1,7 @@
 package com.example.mycurrencyconverter.data.model
 
+import java.io.Serializable
+
 data class ConversionRates(
     val AED: Double,
     val AFN: Double,
@@ -161,4 +163,4 @@ data class ConversionRates(
     val YER: Double,
     val ZAR: Double,
     val ZMW: Double
-)
+): Serializable
