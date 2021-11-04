@@ -1,5 +1,6 @@
 package com.example.mycurrencyconverter.view_models
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,9 +9,14 @@ import com.example.mycurrencyconverter.data.model.CurrencyResponse
 import com.example.mycurrencyconverter.repositories.MainRepository
 import com.example.mycurrencyconverter.util.Constants.API_KEY
 import com.example.mycurrencyconverter.util.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainViewModel(private val mainRepository: MainRepository) : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val mainRepository: MainRepository
+) : ViewModel() {
 
     val currency: MutableLiveData<Resource<CurrencyResponse>> = MutableLiveData()
 

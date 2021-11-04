@@ -2,28 +2,31 @@ package com.example.mycurrencyconverter
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.example.mycurrencyconverter.databinding.ActivityMainBinding
-import com.example.mycurrencyconverter.repositories.MainRepository
 import com.example.mycurrencyconverter.util.Resource
 import com.example.mycurrencyconverter.view_models.MainViewModel
-import com.example.mycurrencyconverter.view_models.MainViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var mainViewModel: MainViewModel
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val mainRepository = MainRepository()
-        val mainViewModelFactory = MainViewModelFactory(mainRepository)
-        mainViewModel = ViewModelProvider(this, mainViewModelFactory).get(MainViewModel::class.java)
+        //TODO: When issue with no-args is solved, refresh some parts of app...
+
+        /** No longer needed because of Dagger Hilt **/
+//        val mainRepository = MainRepository()
+//        val mainViewModelFactory = MainViewModelFactory(mainRepository)
+//        mainViewModel = ViewModelProvider(this, mainViewModelFactory).get(MainViewModel::class.java)
 
         mainViewModel.getConversionRates("15", "EUR", "HRK")
         mainViewModel.currency.observe(this, Observer {
