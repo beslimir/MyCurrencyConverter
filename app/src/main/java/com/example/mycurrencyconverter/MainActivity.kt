@@ -25,28 +25,24 @@ class MainActivity : AppCompatActivity() {
         val mainViewModelFactory = MainViewModelFactory(mainRepository)
         mainViewModel = ViewModelProvider(this, mainViewModelFactory).get(MainViewModel::class.java)
 
-        mainViewModel.getConversionRates("15", "EUR", "HRK")
+        binding.bConvert.setOnClickListener {
+            mainViewModel.getConversionRates(
+                binding.etAmount.text.toString(),
+                binding.sFromCurrency.selectedItem.toString(),
+                binding.sToCurrency.selectedItem.toString()
+            )
+        }
+
         mainViewModel.currency.observe(this, Observer {
-            when(it) {
+            when (it) {
                 is Resource.Success -> {
                     hideProgressBar()
-                    it.body?.let { currencyResponse ->
-                        val conversionRates = currencyResponse.conversion_rates
-                        val rate: Double? = mainViewModel.getRateForCurrency("HRK", conversionRates)
-                        if (rate == null) {
-                            binding.tvResult.text = "Currency not found"
-                        } else {
-                            val convertedCurrency = mainViewModel.calculateRate("15", rate)
-                            binding.tvResult.text = "15 EUR = $convertedCurrency HRK"
-                        }
-
-                    }
+                    binding.tvResult.text = it.message
                 }
                 is Resource.Error -> {
                     hideProgressBar()
-                    it.message?.let { message ->
-                        binding.tvResult.text = "An Error occured: $message"
-                    }
+                    binding.tvResult.text = "An Error occured: ${it.message}"
+
                 }
                 is Resource.Loading -> {
                     showProgressBar()

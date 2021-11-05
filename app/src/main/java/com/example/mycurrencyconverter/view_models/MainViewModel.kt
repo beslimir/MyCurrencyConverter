@@ -1,6 +1,6 @@
 package com.example.mycurrencyconverter.view_models
 
-import androidx.hilt.lifecycle.ViewModelInject
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,6 +11,7 @@ import com.example.mycurrencyconverter.util.Constants.API_KEY
 import com.example.mycurrencyconverter.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,27 +27,30 @@ class MainViewModel @Inject constructor(
         toCurrency: String
     ) = viewModelScope.launch {
         currency.postValue(Resource.Loading())
+
         try {
             val response = mainRepository.getConversionRates(API_KEY, fromCurrency)
             val result = response.body()
 
             if (response.isSuccessful && result != null) {
-                currency.postValue(Resource.Success(result))
-//            if (response.isSuccessful && result != null) {
-//                val conversionRates = result.conversion_rates
-//                val rate: Double? = getRateForCurrency(toCurrency, conversionRates)
-//                if (rate == null) {
-//                    currency.postValue(Resource.Error("Currency not found"))
-//                } else {
-//                    val convertedCurrency = calculateRate(amount, rate)
-//                    currency.postValue(Resource.Success(result))
-//                }
+                val conversionRates = result.conversion_rates
+                val valueForToCurrency = getRateForCurrency(toCurrency, conversionRates)
+                if (valueForToCurrency != null) {
+                    val resultValue = calculateRate(amount, valueForToCurrency)
+                    currency.postValue(Resource.Success(
+                        "Result: $amount $fromCurrency = $resultValue $toCurrency"
+                    ))
+                } else {
+                    currency.postValue(Resource.Error("Currency not found!"))
+                }
             } else {
                 currency.postValue(Resource.Error(response.message()))
             }
+
         } catch (e: Exception) {
             currency.postValue(Resource.Error(e.message ?: "An error occurred"))
         }
+
     }
 
     fun calculateRate(amount: String, rate: Double): Double {
@@ -102,7 +106,7 @@ class MainViewModel @Inject constructor(
 //            "FJD" -> conversionRates.FJD
 //            "FKP" -> conversionRates.FKP
 //            "FOK" -> conversionRates.FOK
-//            "GBP" -> conversionRates.GBP
+            "GBP" -> conversionRates.GBP
 //            "GEL" -> conversionRates.GEL
 //            "GGP" -> conversionRates.GGP
 //            "GHS" -> conversionRates.GHS
