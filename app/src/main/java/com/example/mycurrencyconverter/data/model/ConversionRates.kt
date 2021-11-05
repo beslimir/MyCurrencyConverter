@@ -52,7 +52,7 @@ data class ConversionRates(
 //    val FJD: Double,
 //    val FKP: Double,
 //    val FOK: Double,
-//    val GBP: Double,
+    val GBP: Double,
 //    val GEL: Double,
 //    val GGP: Double,
 //    val GHS: Double,
